@@ -1,0 +1,80 @@
+﻿<Window x:Class="DMaster.Views.ProjectView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DMaster.Views"
+        mc:Ignorable="d"
+           xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Projects"  WindowState="Maximized">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Popupbox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <DockPanel>
+        <StackPanel   DockPanel.Dock="Left">
+            <Label Margin="0,20,0,0" Content="Projects" HorizontalAlignment="Center"/>
+            <ListBox
+            MinWidth="200"
+            BorderBrush="Green"
+            BorderThickness="1"
+          
+            Margin="20"
+            SelectedItem="{Binding SelectedProject}"
+            ItemsSource="{Binding Projects}"
+            >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                            <Label Content="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        <DockPanel Margin="20" DockPanel.Dock="Top" >
+            <Button  Command="{Binding RemoveProject}" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Margin="8 0 8 0" HorizontalAlignment="Left"
+                        ToolTip="Remove">
+                <materialDesign:PackIcon Kind="Close"  />
+            </Button>
+            <Button  Command="{Binding AddProject}" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Margin="8 0 8 0" HorizontalAlignment="Left"
+                        ToolTip="Add Period">
+                <materialDesign:PackIcon Kind="Plus"  />
+            </Button>
+
+            <Grid/>
+        </DockPanel>
+        <StackPanel Margin="20">
+            <TextBox Margin="10"
+                    Height="30"
+                    Text="{Binding SelectedProject.Name}"
+				    materialDesign:HintAssist.Hint="Name">
+            </TextBox>
+            <ComboBox materialDesign:HintAssist.Hint="Status" Margin="10" ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedProject.Status}" />
+            <DatePicker materialDesign:HintAssist.Hint="Start Time" Margin="10" SelectedDate="{Binding SelectedProject.Start}" />
+            <DatePicker materialDesign:HintAssist.Hint="Finish Plan" Margin="10" SelectedDate="{Binding SelectedProject.Finish}" />
+            <CheckBox Margin="10" IsChecked="{Binding SelectedProject.IsCurrent}" Content="Is Current"/>
+            <TextBox TextWrapping="Wrap" VerticalAlignment="Stretch" Margin="10"
+                 MinWidth="280"
+                 AcceptsReturn="True"                 
+                 VerticalScrollBarVisibility="Auto"
+                 SpellCheck.IsEnabled="True"
+                 materialDesign:HintAssist.Hint="Descriptions"
+                     Text="{Binding SelectedProject.Descriptions}"
+                 Height="80"/>
+            <Button Margin="10" Command="{Binding Save}" HorizontalAlignment="Right"  DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedAccentButton}"  Width="100"
+                    ToolTip="Save">
+                Save
+            </Button>
+
+        </StackPanel>
+    </DockPanel>
+
+</Window>

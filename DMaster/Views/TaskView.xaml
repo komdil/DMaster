@@ -1,0 +1,161 @@
+﻿<Window x:Class="DMaster.Views.TaskView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DMaster.Views"
+        xmlns:comment="clr-namespace:DMaster.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        WindowState="Maximized">
+    <ScrollViewer>
+        <DockPanel>
+
+            <ListBox Margin="20" BorderThickness="1" BorderBrush="Green" DockPanel.Dock="Left" ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding LowTitle}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <DockPanel Margin="20" DockPanel.Dock="Top" >
+                <Button  Command="{Binding RemoveTask}" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Margin="8 0 8 0" HorizontalAlignment="Left"
+                        ToolTip="Remove Task">
+                    <materialDesign:PackIcon Kind="Delete"  />
+                </Button>
+                <Button  Command="{Binding AddTask}" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Margin="8 0 8 0" HorizontalAlignment="Left"
+                        ToolTip="Add Task">
+                    <materialDesign:PackIcon Kind="Plus"  />
+                </Button>
+                <Grid/>
+            </DockPanel>
+            <Grid >
+                <StackPanel  Margin="20" Background="#eff0f1">
+                    <Label Margin="0,0,0,10" HorizontalAlignment="Center" Content="Task Info" />
+                    <DockPanel  Margin="20">
+                        <materialDesign:PackIcon Kind="Key" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <TextBox Margin="10,0,0,0"
+                               
+                         Text="{Binding SelectedTask.Title}"
+                    Height="30"
+				    materialDesign:HintAssist.Hint="Title">
+                        </TextBox>
+                    </DockPanel>
+                   
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Comment" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <TextBox  TextWrapping="Wrap" VerticalAlignment="Stretch"  Margin="10,0,0,0"
+                              Text="{Binding SelectedTask.Descriptions}"
+                 MinWidth="280"
+                 AcceptsReturn="True"                 
+                 VerticalScrollBarVisibility="Auto"
+                 SpellCheck.IsEnabled="True"
+                 materialDesign:HintAssist.Hint="Descriptions"
+                 Height="200"/>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Account" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Assignee: " Margin="10,0,0,0"/>
+                        <ComboBox Margin="10,0,0,0"
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedTask.Assignee}"  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Id}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Account" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="CreatedBy: " Margin="10,0,0,0"/>
+                        <ComboBox Margin="10,0,0,0"
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedTask.CreatedBy}"  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Id}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Account" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Validator: " Margin="10,0,0,0"/>
+                        <ComboBox Margin="10,0,0,0"
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedTask.Validator}"  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Id}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Calendar" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Created Date: " Margin="10,0,0,0"/>
+                        <DatePicker
+                        SelectedDate="{Binding SelectedTask.CreatedDate}"
+                        />
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Calendar" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Finish Date: " Margin="10,0,0,0"/>
+                        <DatePicker
+                        SelectedDate="{Binding SelectedTask.FinishDate}"
+                        />
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Account" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Period: " Margin="10,0,0,0"/>
+                        <ComboBox Margin="10,0,0,0"
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              ItemsSource="{Binding Periods}" SelectedItem="{Binding SelectedTask.Period}"  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Title}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="Account" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Status: " Margin="10,0,0,0"/>
+                        <ComboBox Margin="10,0,0,0"
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedTask.Status}"  >
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <materialDesign:PackIcon Kind="BellRing" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                        <Label Content="Weight: " Margin="10,0,0,0"/>
+                        <ComboBox Margin="10,0,0,0"
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              ItemsSource="{Binding Weights}" SelectedItem="{Binding SelectedTask.Weight}"  >
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel Margin="20">
+                        <DockPanel>
+                            <materialDesign:PackIcon Kind="CommentOutline"  Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                            <Label Content="Comments: " Margin="10,0,0,0"/>
+                        </DockPanel>
+
+                        <ContentControl x:Name="ActiveItem"/>
+                   
+                    </DockPanel>
+                    <DockPanel Margin="20">
+
+                        <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedAccentButton}" Margin="10,0,0,0" Command="{Binding Save}" Width="100"
+                    ToolTip="Save">
+                            Save
+                        </Button>
+                        <Grid></Grid>
+                    </DockPanel>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+    </ScrollViewer>
+</Window>

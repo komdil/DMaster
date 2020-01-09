@@ -1,0 +1,50 @@
+﻿<Window x:Class="DMaster.Views.AddUserView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DMaster.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        Title="AddUserView" Height="250" Width="300">
+    <Grid>
+        <StackPanel Margin="20">
+            <Label Margin="0,0,0,10" HorizontalAlignment="Center" Content="Add New User" />
+            <DockPanel Margin="0,0,0,10">
+                <materialDesign:PackIcon Kind="Account" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                <TextBox Margin="10,0,0,0"
+                    Height="30"
+        Text="{Binding UserId}"
+				    materialDesign:HintAssist.Hint="User Id">
+                </TextBox>
+            </DockPanel>
+            <DockPanel Margin="0,0,0,10">
+                <materialDesign:PackIcon Kind="Key" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                <TextBox Margin="10,0,0,0"
+                         Text="{Binding Password}"
+                    Height="30"
+				    materialDesign:HintAssist.Hint="Password">
+                </TextBox>
+            </DockPanel>
+            <DockPanel Margin="0,0,0,10">
+                <materialDesign:PackIcon Kind="Human" VerticalAlignment="Bottom" Height="25" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+                <ComboBox Margin="10,0,0,0" ItemsSource="{Binding Possessions}" SelectedItem="{Binding Possession}"  materialDesign:HintAssist.Hint="Possession">
+       
+                </ComboBox>
+            </DockPanel>
+            <DockPanel Margin="0,0,0,10">
+                <Button Margin="10,0,0,0" Command="{Binding Cancel}"  DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedAccentButton}"  Width="100"
+                    ToolTip="Cancel">
+                    CANCEL
+                </Button>
+                <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedAccentButton}"  Command="{Binding Add}" Width="100"
+                    ToolTip="Add new user">
+                    OK
+                </Button>
+                <Grid></Grid>
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>
