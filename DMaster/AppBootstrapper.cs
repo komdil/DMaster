@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using DMaster.Model;
+using DMaster.Model.Helpers;
 using DMaster.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,9 @@ namespace DMaster
         }
         public bool IsAuthorized()
         {
-            DataProvider DataProvider = new DataProvider();
+            var context = Global.MainContext;
             var mac = Machine.GetProcessorId();
-            return DataProvider.GetEntity<Authorize>().Any(a => a.Machine.ProcessorId == mac);
+            return context.GetEntities<Authorize>().Any(a => a.Machine.ProcessorId == mac);
         }
     }
 }

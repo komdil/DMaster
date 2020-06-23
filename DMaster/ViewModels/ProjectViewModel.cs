@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace DMaster.ViewModels
 {
-    public class ProjectViewModel:BaseViewModel
+    public class ProjectViewModel : BaseViewModel
     {
         public ObservableCollection<Status> Statuses { get; set; } = new ObservableCollection<Status>();
         public ObservableCollection<Project> Projects { get; set; }
@@ -27,14 +27,13 @@ namespace DMaster.ViewModels
                 NotifyOfPropertyChange(nameof(RemoveProject));
             }
         }
-        private void Load()
+        void LoadProjects()
         {
-            DataProvider = new DataProvider();
-            Projects = new ObservableCollection<Project>(DataProvider.GetEntity<Project>().OrderByDescending(s => s.Status == Status.InProgress));
+            Projects = new ObservableCollection<Project>(MainContext.GetEntities<Project>().OrderByDescending(s => s.Status == Status.InProgress));
         }
         public ProjectViewModel()
         {
-            Load();
+            LoadProjects();
             Statuses.Add(Status.NotStarted);
             Statuses.Add(Status.InProgress);
             Statuses.Add(Status.Done);
@@ -46,7 +45,7 @@ namespace DMaster.ViewModels
         {
             try
             {
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 Message.ShowComMsg("Save Complated!");
             }
             catch (Exception ex)
@@ -54,39 +53,39 @@ namespace DMaster.ViewModels
                 string msg = Helper.GetMessage(ex);
                 Message.ShowErrorMsg("Name must be unique!\n" + msg);
             }
-           
+
         }
         private void AddProjectCmd()
         {
             try
             {
                 var newProject = new Project();
-                DataProvider.AddEntity(newProject);
+                MainContext.AddEntity(newProject);
                 Projects.Add(newProject);
                 SelectedProject = newProject;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
             }
             catch (Exception ex)
             {
-              //  string msg = Helper.GetMessage(ex);
-               // Message.ShowErrorMsg("Name must be unique!\n"+msg);
+                //  string msg = Helper.GetMessage(ex);
+                // Message.ShowErrorMsg("Name must be unique!\n"+msg);
             }
-          
+
         }
         private void RemoveProjectCmd()
         {
             var Yes = MessageBox.Show("Would you like delete project?\n All Tasks and Periods will be deleted!!!", "Deleting Project", MessageBoxButton.YesNo);
-            if (Yes==MessageBoxResult.Yes)
+            if (Yes == MessageBoxResult.Yes)
             {
-                DataProvider.Remove(SelectedProject);
+                MainContext.Remove(SelectedProject);
                 Projects.Remove(SelectedProject);
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
             }
         }
         private bool Validate()
         {
             return true;
         }
-        
+
     }
 }

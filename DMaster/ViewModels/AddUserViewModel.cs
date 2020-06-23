@@ -42,7 +42,7 @@ namespace DMaster.ViewModels
         public Command Add { get { return new Command(CanAdd, new Action(AddCmd)); } }
         private void AddCmd()
         {
-           if( !DataProvider.GetEntity<User>().Any(a => a.Id == UserId))
+           if( !MainContext.GetEntities<User>().Any(a => a.Id == UserId))
             {
                 User user = new User
                 {
@@ -50,8 +50,8 @@ namespace DMaster.ViewModels
                     Password=Password,
                     Possession=Possession
                 };
-                DataProvider.AddEntity(user);
-                DataProvider.SaveChanges();
+                MainContext.AddEntity(user);
+                MainContext.SaveChanges();
                 Message.ShowComMsg("You added new User");
                 TryClose();
             }

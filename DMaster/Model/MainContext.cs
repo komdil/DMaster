@@ -1,67 +1,21 @@
-﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
-using MySql.Data.Entity;
-using System.Collections.Specialized;
-using System.Configuration;
-using DMaster.Model.Helpers;
-using System.Data.SqlClient;
-using System.Net.NetworkInformation;
+﻿using System.Data.Entity;
+using SQLite.CodeFirst;
+using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace DMaster.Model
 {
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class MainContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public string Host => Database.Connection.DataSource;
-        public bool IsConnectionLost { get; set; }
-        public string ErrorMessage { get; set; } = "";
-        public bool IsConnectionSuccess()
+        public MainContext() : base("DSprint")
         {
-            try
-            {
-                Ping myPing = new Ping();
-                String host = Database.Connection.DataSource;
-                byte[] buffer = new byte[32];
-                int timeout = 1000;
-                PingOptions pingOptions = new PingOptions();
-                PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
-                if (reply.Status == IPStatus.Success)
-                {
-                    Database.Connection.Open();
-                    Database.Connection.Close();
-                }
-                else
-                {
-                    ErrorMessage = $"Ping to addess {host} is not success";
-                    IsConnectionLost = true;
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                IsConnectionLost = true;
-                ErrorMessage = Helper.GetMessage(ex);
-                return false;
-            }
-            return true;
+            Configuration.LazyLoadingEnabled = true;
+            Configuration.ProxyCreationEnabled = true;
         }
 
-        public MainContext() : base(GetConnectionString("DSprint"))
-        {
-            if (IsConnectionSuccess())
-            {
-                if (!Database.Exists())
-                {
-                    Database.Create();
-                    BlankData();
-                }
-                Configuration.LazyLoadingEnabled = true;
-                Configuration.ProxyCreationEnabled = true;
-            }
-        }
-        private void BlankData()
+        public void BlankData()
         {
             Users.Add(new User { Id = "Any", Possession = UserPossession.Junior, Password = "Any" });
             Users.Add(new User { Id = "Super", Possession = UserPossession.Super, Password = "Super" });
@@ -71,7 +25,6 @@ namespace DMaster.Model
         #region Mapping
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             UserMapping(modelBuilder);
             DTaskMapping(modelBuilder);
             AuthMapping(modelBuilder);
@@ -79,6 +32,10 @@ namespace DMaster.Model
             PeriodMapping(modelBuilder);
             ProjectMapping(modelBuilder);
             CommentMapping(modelBuilder);
+
+
+            var initializer = new ContextDbInitializer(modelBuilder);
+            Database.SetInitializer(initializer);
         }
 
         private void CommentMapping(DbModelBuilder modelBuilder)
@@ -126,24 +83,48 @@ namespace DMaster.Model
             modelBuilder.Entity<Project>().ToTable("Project");
             modelBuilder.Entity<Project>().HasKey(s => new { s.Id });
         }
-        static string GetConnectionString(string dbName)
-        {
-            if (ConfigurationManager.ConnectionStrings != null)
-            {
-                var connString = ConfigurationManager.ConnectionStrings["mysqlCon"].ConnectionString;
-                return String.Format(connString, dbName);
-            }
-            return "";
-        }
 
         #endregion
 
-    }
-    public class MyDbContextInitializer : DropCreateDatabaseIfModelChanges<MainContext>
-    {
-        protected override void Seed(MainContext dbContext)
+
+        #region Crud
+
+
+        public List<T> GetEntities<T>() where T : class
         {
-            base.Seed(dbContext);
+            return Set<T>().ToList();
         }
+
+
+        public void AddEntity<T>(T entity) where T : class
+        {
+            Set<T>().Add(entity);
+        }
+
+        public void Remove<T>(T entity) where T : class
+        {
+            Set<T>().Remove(entity);
+        }
+
+        #endregion
+    }
+    public class ContextDbInitializer : SqliteDropCreateDatabaseWhenModelChanges<MainContext>
+    {
+        public ContextDbInitializer(DbModelBuilder modelBuilder)
+            : base(modelBuilder, typeof(CustomHistory))
+        { }
+
+        protected override void Seed(MainContext context)
+        {
+            context.BlankData();
+        }
+    }
+
+    public class CustomHistory : IHistory
+    {
+        public int Id { get; set; }
+        public string Hash { get; set; }
+        public string Context { get; set; }
+        public DateTime CreateDate { get; set; }
     }
 }

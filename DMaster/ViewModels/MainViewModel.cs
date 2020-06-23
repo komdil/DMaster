@@ -126,8 +126,8 @@ namespace DMaster.ViewModels
         private void LogOut()
         {
             var auth = User.Authorizes.Single(a => a.Machine.ProcessorId == Machine.GetProcessorId());
-            DataProvider.Remove(auth);
-            DataProvider.SaveChanges();
+            MainContext.Remove(auth);
+            MainContext.SaveChanges();
             Helper.OpenWindow<AuthViewModel>();
             TryClose();
         }
@@ -174,23 +174,30 @@ namespace DMaster.ViewModels
                 return false;
             }
         }
+
         public ObservableCollection<DTask> GetTasks(Status status, string Title = null, int Id = 0, User user = null)
         {
             if (user == null || user.Id == "All")
             {
-                if (Title != null)
+                if (CurrentPeriod != null)
                 {
-                    return new ObservableCollection<DTask>(CurrentPeriod.Tasks.Where(a => a.Status == status && a.Title.ToLower().Contains(Title.ToLower())).OrderByDescending(d => d.PeriodId == CurrentPeriod.Id));
-                }
-                else if (Id != 0)
-                {
-                    return new ObservableCollection<DTask>(CurrentPeriod.Tasks.Where(a => a.Status == status && a.Id == Id).OrderByDescending(d => d.PeriodId == CurrentPeriod.Id));
+                    if (Title != null)
+                    {
+                        return new ObservableCollection<DTask>(CurrentPeriod.Tasks.Where(a => a.Status == status && a.Title.ToLower().Contains(Title.ToLower())).OrderByDescending(d => d.PeriodId == CurrentPeriod.Id));
+                    }
+                    else if (Id != 0)
+                    {
+                        return new ObservableCollection<DTask>(CurrentPeriod.Tasks.Where(a => a.Status == status && a.Id == Id).OrderByDescending(d => d.PeriodId == CurrentPeriod.Id));
+                    }
+                    else
+                    {
+                        return new ObservableCollection<DTask>(CurrentPeriod.Tasks.Where(a => a.Status == status).OrderByDescending(d => d.PeriodId == CurrentPeriod.Id));
+                    }
                 }
                 else
                 {
-                    return new ObservableCollection<DTask>(CurrentPeriod.Tasks.Where(a => a.Status == status).OrderByDescending(d => d.PeriodId == CurrentPeriod.Id));
+                    return new ObservableCollection<DTask>();
                 }
-
             }
             else
             {
@@ -227,7 +234,6 @@ namespace DMaster.ViewModels
                 else
                 {
                     return GetTasks(Status.NotStarted, user: SelectedUser);
-
                 }
 
             }
@@ -307,8 +313,8 @@ namespace DMaster.ViewModels
             var request = MessageBox.Show("Would you like delete this task?", "Deleting task", MessageBoxButton.YesNo);
             if (request == MessageBoxResult.Yes)
             {
-                DataProvider.Remove(SelectedNotStartedTask);
-                DataProvider.SaveChanges();
+                MainContext.Remove(SelectedNotStartedTask);
+                MainContext.SaveChanges();
                 NotifyTasks();
             }
 
@@ -322,7 +328,7 @@ namespace DMaster.ViewModels
             if (request == MessageBoxResult.Yes)
             {
                 SelectedNotStartedTask.Status = Status.InProgress;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyTasks();
 
             }
@@ -336,7 +342,7 @@ namespace DMaster.ViewModels
             if (request == MessageBoxResult.Yes)
             {
                 SelectedNotStartedTask.Status = Status.Done;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyTasks();
 
             }
@@ -365,8 +371,8 @@ namespace DMaster.ViewModels
             var request = MessageBox.Show("Would you like delete this task?", "Deleting task", MessageBoxButton.YesNo);
             if (request == MessageBoxResult.Yes)
             {
-                DataProvider.Remove(SelectedInProgressTask);
-                DataProvider.SaveChanges();
+                MainContext.Remove(SelectedInProgressTask);
+                MainContext.SaveChanges();
                 NotifyTasks();
             }
 
@@ -380,7 +386,7 @@ namespace DMaster.ViewModels
             if (request == MessageBoxResult.Yes)
             {
                 SelectedInProgressTask.Status = Status.NotStarted;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyTasks();
 
             }
@@ -394,7 +400,7 @@ namespace DMaster.ViewModels
             if (request == MessageBoxResult.Yes)
             {
                 SelectedInProgressTask.Status = Status.Done;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyTasks();
 
             }
@@ -423,8 +429,8 @@ namespace DMaster.ViewModels
             var request = MessageBox.Show("Would you like delete this task?", "Deleting task", MessageBoxButton.YesNo);
             if (request == MessageBoxResult.Yes)
             {
-                DataProvider.Remove(SelectedDoneTask);
-                DataProvider.SaveChanges();
+                MainContext.Remove(SelectedDoneTask);
+                MainContext.SaveChanges();
                 NotifyTasks();
             }
 
@@ -438,7 +444,7 @@ namespace DMaster.ViewModels
             if (request == MessageBoxResult.Yes)
             {
                 SelectedDoneTask.Status = Status.InProgress;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyTasks();
 
             }
@@ -452,7 +458,7 @@ namespace DMaster.ViewModels
             if (request == MessageBoxResult.Yes)
             {
                 SelectedDoneTask.Status = Status.NotStarted;
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyTasks();
 
             }
@@ -509,8 +515,8 @@ namespace DMaster.ViewModels
         public void LoadData()
         {
             base.Load();
-            Users = new ObservableCollection<User>(DataProvider.GetEntity<User>());
-            Projects = new ObservableCollection<Project>(DataProvider.GetEntity<Project>());
+            Users = new ObservableCollection<User>(MainContext.GetEntities<User>());
+            Projects = new ObservableCollection<Project>(MainContext.GetEntities<Project>());
             NotifyTasks();
         }
         public MainViewModel()
