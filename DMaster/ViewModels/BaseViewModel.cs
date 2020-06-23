@@ -12,7 +12,6 @@ namespace DMaster.ViewModels
         public string Title { get; set; }
         public override string ToString()
         {
-
             return Title;
         }
         public MainContext MainContext { get; set; }
@@ -51,10 +50,6 @@ namespace DMaster.ViewModels
                 string msg = Helper.GetMessage(ex);
                 Model.Helpers.Message.ShowErrorMsg(msg);
             }
-        }
-        ~BaseViewModel()
-        {
-            MainContext.Dispose();
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DMaster.Model
 {
-    public class DTask:EntityBase
+    public class DTask : EntityBase
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -30,9 +30,12 @@ namespace DMaster.Model
         public Status Status { get; set; } = Status.NotStarted;
         public Weight Weight { get; set; } = Weight.Low;
 
-        public virtual string LowTitle { get {
+        public virtual string LowTitle
+        {
+            get
+            {
 
-                if (this.Title.Length>40)
+                if (this.Title.Length > 40)
                 {
                     return $"{Title.Substring(0, 40)}...";
                 }
@@ -57,6 +60,10 @@ namespace DMaster.Model
                 }
             }
         }
-      
+
+        public string CopyTaskLink()
+        {
+            return Title + " -- " + Assignee?.Id;
+        }
     }
 }

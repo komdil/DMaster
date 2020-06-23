@@ -355,6 +355,15 @@ namespace DMaster.ViewModels
             Helper.GetWindow<TaskInfoViewModel>(SelectedNotStartedTask);
         }
 
+        public Command NotStartedCopyTaskTitle { get { return new Command(true, new Action(() => CopyTaskTitleMethod(SelectedNotStartedTask))); } }
+        public Command InProgressCopyTaskTitle { get { return new Command(true, new Action(() => CopyTaskTitleMethod(SelectedInProgressTask))); } }
+        public Command DoneCopyTaskTitle { get { return new Command(true, new Action(() => CopyTaskTitleMethod(SelectedDoneTask))); } }
+
+        void CopyTaskTitleMethod(DTask dTask)
+        {
+            Clipboard.SetText(dTask?.CopyTaskLink());
+        }
+
         public Command ShowNotStartedTask { get { return new Command(true, new Action(ShowNotStartedTaskCmd)); } }
 
         private void ShowNotStartedTaskCmd()
