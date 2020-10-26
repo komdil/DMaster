@@ -24,7 +24,7 @@ namespace DMaster.ViewModels
 
         public MyUsersViewModel()
         {
-            Users = DataProvider.GetEntity<User>().Where(u=>u.Id!="Any").ToList();
+            Users = MainContext.GetEntities<User>().Where(u=>u.Id!="Any").ToList();
             Possessions = new List<UserPossession>();
             Possessions.Add(UserPossession.Expert);
             Possessions.Add(UserPossession.Junior);
@@ -48,7 +48,7 @@ namespace DMaster.ViewModels
                 {
                     SelectedUser.Possession = UserPossession.Super;
                 }
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 Message.ShowComMsg("Save Complated!");
             }
             catch (Exception ex)
@@ -61,9 +61,9 @@ namespace DMaster.ViewModels
         {
             try
             {
-                DataProvider.Remove(SelectedUser);
+                MainContext.Remove(SelectedUser);
                 Users.Remove(SelectedUser);
-                DataProvider.SaveChanges();
+                MainContext.SaveChanges();
                 NotifyOfPropertyChange(nameof(Users));
                 Message.ShowComMsg("Removed!");
             }

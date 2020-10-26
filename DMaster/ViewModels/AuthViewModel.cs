@@ -1,20 +1,14 @@
 ﻿using Caliburn.Micro;
 using DMaster.Model;
 using DMaster.Model.Helpers;
-using DMaster.Views;
-using MaterialDesignThemes.Wpf;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace DMaster.ViewModels
 {
     public class AuthViewModel : Conductor<object>
     {
-        DataProvider DataProvider = new DataProvider();
+        MainContext MainContext = Global.MainContext;
         public Command Cancel { get { return new Command(true, new System.Action(CancelCmd)); } }
         public Command LogIn { get { return new Command(true, new System.Action(Login)); } }
         public string UserId { get; set; }
@@ -22,11 +16,11 @@ namespace DMaster.ViewModels
 
         private void Login()
         {
-            var user = DataProvider.GetEntity<User>().FirstOrDefault(a => a.Id == UserId && a.Password == Password);
+            var user = MainContext.GetEntities<User>().FirstOrDefault(a => a.Id == UserId && a.Password == Password);
             if (user != null && UserId != "Any")
             {
                 var Auth = new Authorize();
-                var machine = DataProvider.GetEntity<Machine>().FirstOrDefault(a => a.ProcessorId == Machine.GetProcessorId() && a.Name == Environment.MachineName);
+                var machine = MainContext.GetEntities<Machine>().FirstOrDefault(a => a.ProcessorId == Machine.GetProcessorId() && a.Name == Environment.MachineName);
                 if (machine == null)
                 {
                     machine = new Machine();
@@ -35,8 +29,8 @@ namespace DMaster.ViewModels
                 }
                 Auth.Machine = machine;
                 Auth.User = user;
-                DataProvider.AddEntity(Auth);
-                DataProvider.SaveChanges();
+                MainContext.AddEntity(Auth);
+                MainContext.SaveChanges();
                 Helper.OpenWindow<MainViewModel>();
                 TryClose();
             }

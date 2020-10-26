@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DMaster.Model.Helpers;
+using OceanAirdrop;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,10 +8,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeTracker.Data;
 
 namespace DMaster.Model
 {
-    public class DTask:EntityBase
+    public class DTask : EntityBase
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -30,9 +33,12 @@ namespace DMaster.Model
         public Status Status { get; set; } = Status.NotStarted;
         public Weight Weight { get; set; } = Weight.Low;
 
-        public virtual string LowTitle { get {
+        public virtual string LowTitle
+        {
+            get
+            {
 
-                if (this.Title.Length>40)
+                if (this.Title.Length > 40)
                 {
                     return $"{Title.Substring(0, 40)}...";
                 }
@@ -57,6 +63,15 @@ namespace DMaster.Model
                 }
             }
         }
-      
+
+        public string CopyTaskLink()
+        {
+            return Title + " -- " + Assignee?.Id;
+        }
+
+        public TimerType GetTimerType()
+        {
+            return DBHelper.GetTimerList().FirstOrDefault(a => a.pmo_num == this.Id.ToString());
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace DMaster.ViewModels
         }
         void LoadTask(DTask dTask)
         {
-            Task = DataProvider.GetEntity<DTask>().Single(a => a.Id == dTask.Id);
+            Task = MainContext.GetEntities<DTask>().Single(a => a.Id == dTask.Id);
         }
         public Command AddComment { get { return new Command(true, new Action(AddCommentCmd)); } }
 
@@ -39,10 +39,10 @@ namespace DMaster.ViewModels
                 Comment comment = new Comment();
                 comment.Date = DateTime.Now;
                 comment.Task = Task;
-                comment.User = DataProvider.GetEntity<User>().Single(a => a.Id == User.Id);
+                comment.User = MainContext.GetEntities<User>().Single(a => a.Id == User.Id);
                 comment.Text = TextComment;
-                DataProvider.AddEntity(comment);
-                DataProvider.SaveChanges();
+                MainContext.AddEntity(comment);
+                MainContext.SaveChanges();
                 TextComment = "";
             }
            

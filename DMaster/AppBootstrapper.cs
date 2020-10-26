@@ -1,6 +1,8 @@
 ﻿using Caliburn.Micro;
 using DMaster.Model;
+using DMaster.Model.Helpers;
 using DMaster.ViewModels;
+using OceanAirdrop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,19 @@ namespace DMaster
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
+            LocalSqllite.CreateNewSQLLiteDatabase();
+            //var context = Global.MainContext;
+            //var allTasks = context.GetEntities<DTask>().ToList();
+            //foreach (var item in allTasks)
+            //{
+            //    string sql = string.Format("INSERT INTO [timer_types] (pmo_number, description) VALUES ('{0}', '{1}')", item.Id.ToString(), item.Title);
+            //    var res = LocalSqllite.ExecSQLCommand(sql);
+            //    if (!res)
+            //    {
+
+            //    }
+            //}
+
             if (IsAuthorized())
             {
                 DisplayRootViewFor<MainViewModel>();
@@ -32,9 +47,9 @@ namespace DMaster
         }
         public bool IsAuthorized()
         {
-            DataProvider DataProvider = new DataProvider();
+            var context = Global.MainContext;
             var mac = Machine.GetProcessorId();
-            return DataProvider.GetEntity<Authorize>().Any(a => a.Machine.ProcessorId == mac);
+            return context.GetEntities<Authorize>().Any(a => a.Machine.ProcessorId == mac);
         }
     }
 }
