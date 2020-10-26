@@ -28,7 +28,11 @@ namespace DMaster
             //foreach (var item in allTasks)
             //{
             //    string sql = string.Format("INSERT INTO [timer_types] (pmo_number, description) VALUES ('{0}', '{1}')", item.Id.ToString(), item.Title);
-            //    LocalSqllite.ExecSQLCommand(sql);
+            //    var res = LocalSqllite.ExecSQLCommand(sql);
+            //    if (!res)
+            //    {
+
+            //    }
             //}
 
             if (IsAuthorized())

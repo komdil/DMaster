@@ -372,8 +372,10 @@ namespace DMaster.ViewModels
 
         void StartTimer(DTask dTask)
         {
+            System.Windows.Forms.Application.EnableVisualStyles();
+            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             MainForm mainForm = new MainForm(dTask.GetTimerType());
-            mainForm.Show();
+            System.Windows.Forms.Application.Run(mainForm);
         }
 
         public Command ShowNotStartedTask { get { return new Command(true, new Action(ShowNotStartedTaskCmd)); } }
