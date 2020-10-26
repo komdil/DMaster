@@ -1,14 +1,7 @@
 ﻿using OceanAirdrop;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TimeTracker.Data;
 using TimeTracker.Dialogs;
@@ -35,11 +28,24 @@ namespace TimeTracker
 
         public bool m_isPaused = false;
 
+
+        public TimerType CurrentTimer { get; set; }
+        public MainForm(TimerType timerType) : this()
+        {
+            CurrentTimer = timerType;
+        }
+
         public MainForm()
         {
             InitializeComponent();
 
             m_handle = this;
+            this.FormClosing += MainForm_FormClosing;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            m_scroll.StopTimer();
         }
 
         private void labelCurrentTimer_Click(object sender, EventArgs e)
@@ -163,7 +169,7 @@ namespace TimeTracker
                 labelCurrentTimer.Text = string.Format("{0}h : {1}m : {2}s", m_stopWatch.Elapsed.Hours.ToString("00"), m_stopWatch.Elapsed.Minutes.ToString("00"), m_stopWatch.Elapsed.Seconds.ToString("00"));
 
                 UpdateDatabaseTimeRecord(false);
-                
+
                 UpdateScrollingText();
                 UpdateTotalTimeWorkedToday();
             }
@@ -181,7 +187,7 @@ namespace TimeTracker
                     return;
 
                 if (bOverrideTimeCheck == false)
-                {                   
+                {
                     TimeSpan span = DateTime.Now - m_dateTimeLastWriteToDB;
 
                     const int intervalTimeMins = 1;
@@ -225,7 +231,7 @@ namespace TimeTracker
                 }
                 else
                 {
-                    this.buttonPauseTimer.Text = string.Format("UnPausing in\n{0}",TimeSpanToFriendlyString(remainingTime) );
+                    this.buttonPauseTimer.Text = string.Format("UnPausing in\n{0}", TimeSpanToFriendlyString(remainingTime));
                 }
             }
             catch (Exception ex)
@@ -233,27 +239,48 @@ namespace TimeTracker
                 Console.WriteLine(ex.Message);
             }
         }
-        
+
 
         private void buttonStartTimer_Click(object sender, EventArgs e)
         {
             UpdateDatabaseTimeRecord(true);
             UpdateScrollingText();
 
-            TimeSelection dlg = new TimeSelection();
-
-            if (dlg.ShowDialog() == DialogResult.OK)
+            if (CurrentTimer == null)
             {
-                if (dlg.m_selected == null)
-                    return;
+                TimeSelection dlg = new TimeSelection();
 
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    if (dlg.m_selected == null)
+                        return;
+
+                    buttonStopCurentTimer_Click(null, null);
+
+                    m_currentTimer = dlg.m_selected;
+
+                    string sql = DBHelper.GenerateInsertTimeRecordSQL(m_currentTimer);
+                    m_currentTimer.db_id = LocalSqllite.ExecSQLCommandScalar(sql);
+
+                    // Create new stopwatch.
+                    m_stopWatch = System.Diagnostics.Stopwatch.StartNew();
+
+                    m_isPaused = false;
+
+                    labelTimerDescription.Text = m_currentTimer.desc;
+
+                    buttonPauseTimer.Enabled = true;
+                }
+            }
+            else
+            {
                 buttonStopCurentTimer_Click(null, null);
 
-                m_currentTimer = dlg.m_selected;
+                m_currentTimer = CurrentTimer;
 
                 string sql = DBHelper.GenerateInsertTimeRecordSQL(m_currentTimer);
                 m_currentTimer.db_id = LocalSqllite.ExecSQLCommandScalar(sql);
-                
+
                 // Create new stopwatch.
                 m_stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -265,7 +292,7 @@ namespace TimeTracker
             }
         }
 
-        private void StartUnpauseTimer( int unpauseTimeMins )
+        private void StartUnpauseTimer(int unpauseTimeMins)
         {
             m_unpauseEndTime = DateTime.Now.AddMinutes(unpauseTimeMins);
             StartUnpauseTimer();
@@ -276,7 +303,7 @@ namespace TimeTracker
             if (m_stopWatch == null)
                 return;
 
-            if (m_isPaused == false )
+            if (m_isPaused == false)
             {
                 UnpauseTimer dlg = new UnpauseTimer();
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -411,7 +438,7 @@ namespace TimeTracker
                 monday = DBHelper.DateToDBDate(mondayDT);
                 sunday = DBHelper.DateToDBDate(sundayDT);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 success = false;
@@ -444,7 +471,7 @@ namespace TimeTracker
                 m_scroll.AddTextToDisplay(string.Format("*** Total time worked today: {0} ***", friendlyTime));
 
                 string monday, sunday;
-                if ( GetWeekBeginningAndEnd(out monday, out sunday) == true )
+                if (GetWeekBeginningAndEnd(out monday, out sunday) == true)
                 {
                     string sqlWeek = string.Format("select ifnull(sum(mins_accrued),0) from time_sheet where Date >= Datetime('{0}') and Date <= Datetime('{1}')", monday, sunday);
                     minsWorked = LocalSqllite.ExecSQLCommandScalar(sqlWeek);

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using TimeTracker;
 
 namespace DMaster.ViewModels
 {
@@ -362,6 +363,17 @@ namespace DMaster.ViewModels
         void CopyTaskTitleMethod(DTask dTask)
         {
             Clipboard.SetText(dTask?.CopyTaskLink());
+        }
+
+
+        public Command NotStartedStartTimer { get { return new Command(true, new Action(() => StartTimer(SelectedNotStartedTask))); } }
+        public Command InProgressStartTimer { get { return new Command(true, new Action(() => StartTimer(SelectedInProgressTask))); } }
+        public Command DoneStartTimer { get { return new Command(true, new Action(() => StartTimer(SelectedDoneTask))); } }
+
+        void StartTimer(DTask dTask)
+        {
+            MainForm mainForm = new MainForm(dTask.GetTimerType());
+            mainForm.Show();
         }
 
         public Command ShowNotStartedTask { get { return new Command(true, new Action(ShowNotStartedTaskCmd)); } }

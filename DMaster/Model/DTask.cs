@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DMaster.Model.Helpers;
+using OceanAirdrop;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeTracker.Data;
 
 namespace DMaster.Model
 {
@@ -64,6 +67,11 @@ namespace DMaster.Model
         public string CopyTaskLink()
         {
             return Title + " -- " + Assignee?.Id;
+        }
+
+        public TimerType GetTimerType()
+        {
+            return DBHelper.GetTimerList().FirstOrDefault(a => a.pmo_num == this.Id.ToString());
         }
     }
 }

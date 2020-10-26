@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using DMaster.Model;
 using DMaster.Model.Helpers;
+using OceanAirdrop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -90,6 +91,8 @@ namespace DMaster.ViewModels
                     throw new Exception("This Task is Already exists! Change title of Task!");
                 }
                 MainContext.SaveChanges();
+                string sql = string.Format("INSERT INTO [timer_types] (pmo_number, description) VALUES ('{0}', '{1}')", SelectedTask.Id.ToString(), SelectedTask.Title);
+                LocalSqllite.ExecSQLCommand(sql);
                 Model.Helpers.Message.ShowComMsg("Save Complated!");
             }
             catch (Exception ex)

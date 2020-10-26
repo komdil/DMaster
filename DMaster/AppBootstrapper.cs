@@ -2,6 +2,7 @@
 using DMaster.Model;
 using DMaster.Model.Helpers;
 using DMaster.ViewModels;
+using OceanAirdrop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,15 @@ namespace DMaster
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
+            LocalSqllite.CreateNewSQLLiteDatabase();
+            //var context = Global.MainContext;
+            //var allTasks = context.GetEntities<DTask>().ToList();
+            //foreach (var item in allTasks)
+            //{
+            //    string sql = string.Format("INSERT INTO [timer_types] (pmo_number, description) VALUES ('{0}', '{1}')", item.Id.ToString(), item.Title);
+            //    LocalSqllite.ExecSQLCommand(sql);
+            //}
+
             if (IsAuthorized())
             {
                 DisplayRootViewFor<MainViewModel>();

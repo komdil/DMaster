@@ -19,19 +19,30 @@ namespace OceanAirdrop
         public List<string> m_listTextToDisplay = new List<string>();
 
         int m_listIndexDisplaying = 0;
+        Timer scrollTimer;
 
-        public void StartScrollingText( Form formLabelOn, Label displayLabel, string textToDisplay )
+        public void StartScrollingText(Form formLabelOn, Label displayLabel, string textToDisplay)
         {
             m_parentForm = formLabelOn;
             m_textToScroll = displayLabel;
             m_textToDisplay = textToDisplay;
 
             displayLabel.Text = textToDisplay;
-
-            Timer scrollTimer = new Timer();
+            scrollTimer = new Timer();
             scrollTimer.Interval = 20;
-            scrollTimer.Tick += new EventHandler(ScrollTextEvent);
+            scrollTimer.Tick += ScrollTimer_Tick;
             scrollTimer.Start();
+        }
+
+        public void StopTimer()
+        {
+            scrollTimer.Tick -= ScrollTimer_Tick;
+            scrollTimer.Stop();
+        }
+
+        private void ScrollTimer_Tick(object sender, EventArgs e)
+        {
+            MoveTextToLeft();
         }
 
         public void ClearTextToDisplay()
@@ -42,11 +53,6 @@ namespace OceanAirdrop
         public void AddTextToDisplay(string textToDisplay)
         {
             m_listTextToDisplay.Add(textToDisplay);
-        }
-
-        private void ScrollTextEvent(object sender, EventArgs e)
-        {
-            MoveTextToLeft();
         }
 
         private void MoveTextToLeft()
