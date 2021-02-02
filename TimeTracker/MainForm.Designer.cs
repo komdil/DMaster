@@ -236,7 +236,7 @@
             this.labelTimerDescription.Name = "labelTimerDescription";
             this.labelTimerDescription.Size = new System.Drawing.Size(433, 36);
             this.labelTimerDescription.TabIndex = 1;
-            this.labelTimerDescription.Text = "Work Area";
+            this.labelTimerDescription.Text = "Work Area1";
             this.labelTimerDescription.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // MainForm
